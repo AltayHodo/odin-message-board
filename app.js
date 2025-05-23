@@ -25,8 +25,12 @@ const messages = [
   },
 ];
 
+function openMessage(index){
+  console.log(index);
+}
+
 app.get('/', (req, res) => {
-  res.render('index', { title: 'Mini Messageboard', messages: messages });
+  res.render('index', { title: 'Mini Messageboard', messages: messages, openMessage: openMessage });
 });
 
 app.use('/new', newMessageRouter);
@@ -37,6 +41,15 @@ app.post('/new', (req, res) => {
   messages.push({ text: message, user: user, added: new Date() });
   res.redirect('/');
 });
+
+app.get('/message/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const message = messages[id];
+  if (!message) {
+    return res.status(404).send("Message not found");
+  }
+  res.render('message', { message })
+})
 
 const PORT = 3000;
 app.listen(PORT, () => {
