@@ -7,12 +7,14 @@
   </head>
   <body>
     <h1><%= title %></h1>
+    <a href="/new">Visit New Message Page</a>
     <ul>
-      <% messages.map((message) => { %>
+      <% messages.map((message, index) => { %>
         <li>
           <div>Text: <%= message.text %></div>
           <div>User: <%= message.user %></div>
           <div>Date Added: <%= message.added %></div>
+          <button data-index=<%- index %>>Open</button>
         </li>
       <% }) %>
     </ul>

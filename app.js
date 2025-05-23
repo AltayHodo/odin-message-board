@@ -8,6 +8,8 @@ app.use(express.static(assetsPath));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(express.urlencoded({ extended: true }));
+
 const newMessageRouter = require('./routes/newMessageRouter');
 
 const messages = [
@@ -24,10 +26,17 @@ const messages = [
 ];
 
 app.get('/', (req, res) => {
-  res.render('index', { title: "Mini Messageboard", messages: messages });
+  res.render('index', { title: 'Mini Messageboard', messages: messages });
 });
 
 app.use('/new', newMessageRouter);
+
+app.post('/new', (req, res) => {
+  const user = req.body.name;
+  const message = req.body.message;
+  messages.push({ text: message, user: user, added: new Date() });
+  res.redirect('/');
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
