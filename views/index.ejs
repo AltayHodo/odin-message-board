@@ -14,7 +14,7 @@
         <div>Text: <%= message.text %></div>
         <div>User: <%= message.user %></div>
         <div>Date Added: <%= message.added %></div>
-        <button><a href="/message/<%= index %>">Open</a></button>
+        <button><a href="/message/<%= message.id %>">Open</a></button>
       </li>
       <% }) %>
     </ul>

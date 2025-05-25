@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const db = require('./db/queries')
 
 const assetsPath = path.join(__dirname, 'public');
 app.use(express.static(assetsPath));
@@ -12,39 +13,37 @@ app.use(express.urlencoded({ extended: true }));
 
 const newMessageRouter = require('./routes/newMessageRouter');
 
-const messages = [
-  {
-    text: 'Hi there!',
-    user: 'Amando',
-    added: new Date(),
-  },
-  {
-    text: 'Hello World!',
-    user: 'Charles',
-    added: new Date(),
-  },
-];
+// const messages = [
+//   {
+//     text: 'Hi there!',
+//     user: 'Amando',
+//     added: new Date(),
+//   },
+//   {
+//     text: 'Hello World!',
+//     user: 'Charles',
+//     added: new Date(),
+//   },
+// ];
 
-function openMessage(index){
-  console.log(index);
-}
 
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Mini Messageboard', messages: messages, openMessage: openMessage });
+app.get('/', async (req, res) => {
+  const messages = await db.getAllMessages();
+  res.render('index', { title: 'Mini Messageboard', messages: messages});
 });
 
 app.use('/new', newMessageRouter);
 
-app.post('/new', (req, res) => {
+app.post('/new', async (req, res) => {
   const user = req.body.name;
   const message = req.body.message;
-  messages.push({ text: message, user: user, added: new Date() });
+  await db.insertMessage({user, text: message});
   res.redirect('/');
 });
 
-app.get('/message/:id', (req, res) => {
+app.get('/message/:id', async(req, res) => {
   const id = parseInt(req.params.id);
-  const message = messages[id];
+  const message = await db.getMessageById(id);
   if (!message) {
     return res.status(404).send("Message not found");
   }
